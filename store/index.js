@@ -1,41 +1,41 @@
-export const testStore = defineStore("counter", {
+export const testStore = defineStore('counter', {
   state: () => ({
-    questions: [],
+    // questions: [],
     // amount: "10",
-    category: "",
-    difficulty: "",
-    type: "",
+    category: '',
+    difficulty: '',
+    type: '',
     total: 0,
     questionNumber: 0,
     score: 0,
   }),
   getters: {
-    doubleCount: (state) => state.count * 2,
+    // doubleCount: (state) => state.count * 2,
     getparamater(state) {
       return (
-        "?amount=" +
+        '?amount=' +
         state.total +
-        "&category=" +
+        '&category=' +
         state.category +
-        "&difficulty=" +
+        '&difficulty=' +
         state.difficulty +
-        "&type=" +
+        '&type=' +
         state.type
-      );
+      )
     },
-    getQuestions(state) {
-      const {
-        data: categories,
-        pending,
-        error,
-        refresh,
-      } = useAsyncData("", () =>
-        $fetch("https://opentdb.com/api.php" + state.getparamater)
-      );
+    // getQuestions(state) {
+    //   const {
+    //     data: categories,
+    //     pending,
+    //     error,
+    //     refresh,
+    //   } = useAsyncData('', () =>
+    //     $fetch('https://opentdb.com/api.php' + state.getparamater)
+    //   )
 
-      state.questions = categories.value?.results;
-      return state.questions;
-    },
+    //   state.questions = categories.value?.results
+    //   return state.questions
+    // },
   },
   actions: {},
-});
+})
