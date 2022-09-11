@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="data">
+    <div v-if="data && !hasSubmitted">
       <form @submit.prevent="startGame" class="container">
         <div class="card w-75 mx-auto" style="width: 18rem">
           <div class="card-body mx-auto">
@@ -57,34 +57,30 @@
         </div>
       </form>
     </div>
+    <div v-else class="w-50 mx-auto">
+      <h1 class="my-5">Loading...</h1>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { testStore } from "~/store/";
+import { testStore } from '~/store/'
 
-const store = testStore();
-const number = ref(10);
-const category = ref("0");
-const apicategory = ref([]);
-const type = ref("");
-const difficulty = ref("");
-const router = useRouter();
+const store = testStore()
+const number = ref(10)
+const category = ref('0')
+const type = ref('')
+const difficulty = ref('')
+const router = useRouter()
+const hasSubmitted = ref(false)
 
 function startGame() {
-  // router.push(
-  //   "/game?amount=" +
-  //     number.value +
-  //     "&category=" +
-  //     category.value +
-  //     "&difficulty=" +
-  //     difficulty.value
-  // );
-  router.push("/game");
-  store.total = number.value;
-  store.category = category.value;
-  store.difficulty = difficulty.value;
-  store.type = type.value;
+  router.push('/game')
+  store.total = number.value
+  store.category = category.value
+  store.difficulty = difficulty.value
+  store.type = type.value
+  hasSubmitted.value = true
 
   //   router.push({
   //     name: "game",
@@ -97,7 +93,7 @@ function startGame() {
   //   });
 }
 
-const { data, pending, error, refresh } = await useAsyncData("categories", () =>
-  $fetch("https://opentdb.com/api_category.php")
-);
+const { data, pending, error, refresh } = await useAsyncData('categories', () =>
+  $fetch('https://opentdb.com/api_category.php')
+)
 </script>
