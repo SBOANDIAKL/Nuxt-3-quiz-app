@@ -7,7 +7,9 @@
             <p class="pt-3">Total Questions: {{ store.total }}</p>
           </div>
           <div class="text-light col-sm">
-            <p class="pt-3">Questions Number: {{ store.questionNumber + 1 }}</p>
+            <p class="pt-3">
+              Questions Left: {{ store.total - store.questionNumber }}
+            </p>
           </div>
           <div class="text-light col-sm">
             <p class="pt-3">
@@ -19,7 +21,10 @@
       <div class="card mx-auto w-75" style="width: 18rem">
         <h3></h3>
         <div class="card-body">
-          <h5 class="card-title" v-html="thisQuestion?.question"></h5>
+          <h5
+            class="card-title"
+            v-html="store.questionNumber + 1 + '. ' + thisQuestion?.question"
+          ></h5>
           <p class="card-text mb-0 mt-5">
             Choose correct answer:
             <!-- {{ thisQuestion?.correct_answer }} -->
@@ -64,81 +69,81 @@
         </div>
       </div>
     </div>
-    <div v-else class="w-50 mx-auto">
-      <h1 class="my-5">No Data Found...</h1>
-      <nuxt-link to="/" class="btn btn-success">Go to Home Page</nuxt-link>
+    <div v-else>
+      <h1>Loading...</h1>
     </div>
   </div>
 </template>
 
 <script setup>
-import { testStore } from "~/store/";
-const store = testStore();
+import { testStore } from '~/store/'
+const store = testStore()
 // const route = useRoute();
-const reply = ref("");
-const submitted = ref(false);
-const correctIndex = ref(null);
-const isGameOver = ref(false);
-const gameFinished = ref(false);
-const router = useRouter();
-const clickedId = ref(-1);
-const hasData = ref(false);
+const reply = ref('')
+const submitted = ref(false)
+const correctIndex = ref(null)
+const isGameOver = ref(false)
+const gameFinished = ref(false)
+const router = useRouter()
+const clickedId = ref(-1)
+const hasData = ref(true)
 // if (store.total) {
-hasData.value = true;
+// hasData.value = true
 
-const fetchName = Math.random().toFixed(10).toString();
-console.log(store.getparamater);
+const fetchName = Math.random().toFixed(10).toString()
+// console.log(store.getparamater)
 const { data, pending, error, refresh } = await useAsyncData(fetchName, () =>
-  $fetch("https://opentdb.com/api.php" + store.getparamater)
-);
+  $fetch('https://opentdb.com/api.php' + store.getparamater)
+)
 if (store.total == 0) {
-  hasData.value = false;
+  router.push('/')
+  hasData.value = false
 }
-const allQuestions = data.value?.results;
+const allQuestions = data.value?.results
 
 // const loaded = computed(() => allQuestions?.length);
 
-const hasSubmitted = computed(() => submitted.value);
+const hasSubmitted = computed(() => submitted.value)
 
-const thisQuestion = computed(() => allQuestions[store.questionNumber]);
+const thisQuestion = computed(() => allQuestions[store.questionNumber])
 
 const answers = computed(() =>
   [...thisQuestion.value?.incorrect_answers, thisQuestion.value?.correct_answer]
     .sort()
     .reverse()
-);
+)
 
 function checkAnswer(id) {
   if (answers.value[id] == thisQuestion.value.correct_answer) {
-    reply.value = "Correct";
-    correctIndex.value = id;
-    store.score++;
+    reply.value = 'Correct'
+    correctIndex.value = id
+    store.score++
   } else {
-    reply.value = "Incorrect";
+    reply.value = 'Incorrect'
     correctIndex.value = answers.value.findIndex(
       (item) => item === thisQuestion.value.correct_answer
-    );
+    )
   }
   // To add color in correct/incorrect answer
-  clickedId.value = id;
+  clickedId.value = id
   if (store.questionNumber + 1 == store.total) {
-    isGameOver.value = true;
+    isGameOver.value = true
   }
-  submitted.value = true;
+  submitted.value = true
 }
 
 function playAgain() {
-  nextQuestion();
-  store.total = 10;
-  store.questionNumber = 0;
-  store.questions = [];
-  store.score = 0;
-  gameFinished.value = "true";
-  router.push("/");
+  nextQuestion()
+  store.total = 0
+  store.questionNumber = 0
+  // store.questions = []
+  store.score = 0
+  gameFinished.value = 'true'
+  router.push('/')
 }
 
 function nextQuestion() {
-  store.questionNumber++;
-  submitted.value = false;
+  store.questionNumber++
+  submitted.value = false
 }
 </script>
